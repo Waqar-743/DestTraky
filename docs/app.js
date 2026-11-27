@@ -106,7 +106,7 @@
     timeline: {
       badge: "Dual-Lane Timeline",
       windowTitle: "DestTraky / Timeline · Online, Idle & App Sessions",
-      title: "Tockler-Inspired Dual-Lane Timeline & Manual Task Log",
+      title: "Dual-Lane Timeline & Manual Task Log",
       desc: "Inspect every minute of your day across a zoomable (24h / 12h / 6h) dual-lane strip showing Online, Idle, and Offline presence directly above color-coded app blocks.",
       lightSrc: "assets/screenshots/timeline-light.png",
       darkSrc: "assets/screenshots/timeline-dark.png",
@@ -118,7 +118,7 @@
       ],
     },
     rules: {
-      badge: "arbtt-Style Engine",
+      badge: "Regex Rule Engine",
       windowTitle: "DestTraky / Rules · Regex Rules & Live Sandbox",
       title: "Deterministic Regex Rules & Live Rule Sandbox",
       desc: "Write substring or regular-expression rules evaluated in strict WindowTitle > AppName > Neutral order, attach custom #tags, and verify matches live before saving.",
