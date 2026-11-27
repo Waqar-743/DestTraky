@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+>
+  <url>
+    <loc>https://waqar-743.github.io/DestTraky/</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://waqar-743.github.io/DestTraky/assets/screenshots/overview-light.png</image:loc>
+      <image:title>DestTraky Overview Dashboard (Warm Alabaster Light Theme)</image:title>
+      <image:caption>7-day hatched focus score columns, Activity Mix bar, Top Applications, and Session Anatomy flower in DestTraky.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://waqar-743.github.io/DestTraky/assets/screenshots/overview-dark.png</image:loc>
+      <image:title>DestTraky Overview Dashboard (Warm Obsidian Dark Theme)</image:title>
+      <image:caption>Dark mode Windows screen-time analytics dashboard built with Rust and Tauri v2.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://waqar-743.github.io/DestTraky/assets/screenshots/overview-waves-dark.png</image:loc>
+      <image:title>DestTraky Ember Waves Visualization</image:title>
+      <image:caption>Mirrored Ember Waves productivity visualization in DestTraky dark theme.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://waqar-743.github.io/DestTraky/assets/screenshots/timeline-light.png</image:loc>
+      <image:title>DestTraky Dual-Lane Online/Idle Timeline</image:title>
+      <image:caption>Zoomable dual-lane timeline showing Online, Idle, and Offline presence above color-coded Windows application sessions.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://waqar-743.github.io/DestTraky/assets/screenshots/rules-light.png</image:loc>
+      <image:title>DestTraky Priority Regex Rules and Live Sandbox</image:title>
+      <image:caption>Deterministic WindowTitle > AppName > Neutral regex categorization rules and real-time Rule Sandbox.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://waqar-743.github.io/DestTraky/assets/screenshots/focus-light.png</image:loc>
+      <image:title>DestTraky Focus Mode Pomodoro Timer</image:title>
+      <image:caption>Built-in Pomodoro focus timer with daily streak tracking and 7-day focus minutes history.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://waqar-743.github.io/DestTraky/assets/screenshots/limits-light.png</image:loc>
+      <image:title>DestTraky App and Category Daily Limits</image:title>
+      <image:caption>Used vs Budget chart and daily app and category time limits in DestTraky.</image:caption>
+    </image:image>
+  </url>
+</urlset>
