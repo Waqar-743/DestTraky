@@ -252,6 +252,26 @@ impl ActivityTracker {
         out
     }
 
+    /// Non-destructive snapshot of the currently running in-memory session up to `now_ms`.
+    /// Used to overlay live second-by-second timings onto stored SQLite sessions without double-counting.
+    pub fn active_snapshot(&self, now_ms: i64) -> Vec<ActivitySession> {
+        self.active_snapshot_with_tz(now_ms, &Local)
+    }
+
+    pub fn active_snapshot_with_tz<Tz: TimeZone>(&self, now_ms: i64, tz: &Tz) -> Vec<ActivitySession> {
+        if self.paused || self.is_idle {
+            return Vec::new();
+        }
+        let Some(buf) = &self.current else {
+            return Vec::new();
+        };
+        let effective_end = now_ms.max(buf.last_active_ts);
+        if effective_end <= buf.start_ts {
+            return Vec::new();
+        }
+        split_session_by_midnight_with_tz(buf, effective_end, tz)
+    }
+
     fn flush_current_at<Tz: TimeZone>(&mut self, end_ms: i64, tz: &Tz) -> Vec<ActivitySession> {
         let Some(buf) = self.current.take() else {
             return Vec::new();
@@ -261,6 +281,30 @@ impl ActivityTracker {
         }
         split_session_by_midnight_with_tz(&buf, end_ms, tz)
     }
+}
+
+/// Overlay in-memory live session segments onto stored SQLite sessions for `[start_date, end_date]`.
+/// If a checkpointed row with the same session `id` already exists in `stored`, it is replaced in-place
+/// with the fresher live segment so long sessions (e.g. 32+ min in Chrome) are never double-counted.
+pub fn merge_live_sessions(
+    stored: &[ActivitySession],
+    live_segments: &[ActivitySession],
+    start_date: &str,
+    end_date: &str,
+) -> Vec<ActivitySession> {
+    let mut merged = stored.to_vec();
+    for seg in live_segments {
+        if seg.date.as_str() < start_date || seg.date.as_str() > end_date || seg.duration_secs <= 0 {
+            continue;
+        }
+        if let Some(existing) = merged.iter_mut().find(|s| s.id == seg.id) {
+            *existing = seg.clone();
+        } else {
+            merged.push(seg.clone());
+        }
+    }
+    merged.sort_by_key(|s| s.start_ts);
+    merged
 }
 
 /// Split an activity session across every local midnight boundary so daily records remain exact.
@@ -497,5 +541,43 @@ mod tests {
         tracker.tick_with_tz(t0, Some(sample("1Password", "Vault", 0, false)), &settings, &[], &ignores, &utc);
         let out = tracker.tick_with_tz(t0 + 60_000, Some(sample("Code", "app.rs", 0, false)), &settings, &[], &ignores, &utc);
         assert!(out.flushed.is_empty());
+    }
+
+    #[test]
+    fn long_chrome_session_never_double_counts_after_checkpoints() {
+        let utc = FixedOffset::east_opt(0).unwrap();
+        let mut tracker = ActivityTracker::new();
+        let settings = AppSettings::default(); // checkpoint every 60s
+        let t0 = utc.with_ymd_and_hms(2026, 11, 27, 10, 0, 0).unwrap().timestamp_millis();
+        let mut stored: Vec<ActivitySession> = Vec::new();
+
+        // Simulate 32 minutes + 15 seconds continuously in Google Chrome (1935 seconds)
+        for sec in 0..=1935i64 {
+            let out = tracker.tick_with_tz(
+                t0 + sec * 1000,
+                Some(sample("Google Chrome", "DestTraky - Google Chrome", 0, false)),
+                &settings,
+                &[],
+                &[],
+                &utc,
+            );
+            for s in out.flushed.into_iter().chain(out.checkpoint.into_iter()) {
+                if let Some(existing) = stored.iter_mut().find(|x| x.id == s.id) {
+                    *existing = s;
+                } else {
+                    stored.push(s);
+                }
+            }
+        }
+
+        // At 1935s, SQLite has the 32m (1920s) checkpoint, and live snapshot has 1935s with the SAME id.
+        assert_eq!(stored.len(), 1);
+        assert_eq!(stored[0].duration_secs, 1920);
+
+        let live = tracker.active_snapshot_with_tz(t0 + 1935_000, &utc);
+        let merged = merge_live_sessions(&stored, &live, "2026-11-27", "2026-11-27");
+        let total_secs: i64 = merged.iter().map(|s| s.duration_secs).sum();
+        assert_eq!(merged.len(), 1);
+        assert_eq!(total_secs, 1935);
     }
 }
