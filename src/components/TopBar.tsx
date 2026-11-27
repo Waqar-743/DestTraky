@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Download, EyeOff, Flame, Play, Search } from "lucide-react";
 import type { FocusRuntimeState, LiveTrackingStatus, NavTab } from "../types/pulsetrack";
-import { formatDuration } from "../lib/format";
+import { formatDurationLive } from "../lib/format";
 import { BrandLogo } from "./BrandLogo";
 
 interface TopBarProps {
@@ -63,7 +63,7 @@ export function TopBar({
               {live.paused ? "Paused" : live.activeApp ?? "Idle"}
             </span>
             <span className="text-inkFaint">·</span>
-            <span className="tabular-nums">{formatDuration(live.todayTotalSecs)}</span>
+            <span className="tabular-nums">{formatDurationLive(live.todayTotalSecs)}</span>
           </span>
 
           <button

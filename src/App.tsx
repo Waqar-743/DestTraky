@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   ActivitySession,
   AlertNotification,
@@ -92,6 +92,13 @@ export function App() {
   const [settings, setSettings] = useState<AppSettings>(INITIAL_SETTINGS);
   const [alert, setAlert] = useState<AlertNotification | null>(null);
 
+  const rangeRef = useRef({ startDate, endDate });
+  const liveRefreshInFlight = useRef(false);
+
+  useEffect(() => {
+    rangeRef.current = { startDate, endDate };
+  }, [startDate, endDate]);
+
   const refreshData = useCallback(async (sDate: string, eDate: string) => {
     const today = toLocalDateString(new Date());
     const [sum, sess, heatSess, cats, rls, igs, lims, foc, fHist, stg, lv] = await Promise.all([
@@ -120,6 +127,32 @@ export function App() {
     setLive(lv);
   }, []);
 
+  // Lightweight 1-second live refresh: updates ONLY dynamic dashboard metrics, sessions, and limits
+  // without re-fetching static settings/rules/categories or overlapping in-flight requests.
+  const refreshLiveMetrics = useCallback(async () => {
+    if (liveRefreshInFlight.current || (typeof document !== "undefined" && document.hidden)) {
+      return;
+    }
+    const { startDate: sDate, endDate: eDate } = rangeRef.current;
+    const today = toLocalDateString(new Date());
+    if (today < sDate || today > eDate) {
+      return;
+    }
+    liveRefreshInFlight.current = true;
+    try {
+      const [sum, sess, lims] = await Promise.all([
+        api.getDashboardSummary(sDate, eDate),
+        api.getSessions(sDate, eDate),
+        api.listLimitStatuses(),
+      ]);
+      setSummary(sum);
+      setSessions(sess);
+      setLimits(lims);
+    } finally {
+      liveRefreshInFlight.current = false;
+    }
+  }, []);
+
   useEffect(() => {
     void refreshData(startDate, endDate);
   }, [startDate, endDate, refreshData]);
@@ -143,7 +176,10 @@ export function App() {
     let cleanup: (() => void) | null = null;
     void api
       .subscribeEvents({
-        onLive: (lv) => setLive(lv),
+        onLive: (lv) => {
+          setLive(lv);
+          void refreshLiveMetrics();
+        },
         onFocus: (fc) => setFocus(fc),
         onAlert: (al) => {
           setAlert(al);
@@ -158,7 +194,7 @@ export function App() {
     return () => {
       cleanup?.();
     };
-  }, []);
+  }, [refreshLiveMetrics]);
 
   const handleSelectPreset = (next: DateRangePreset) => {
     setPreset(next);

@@ -158,14 +158,14 @@ function generateSeedSessions(rules: CategoryRule[]): ActivitySession[] {
   const rand = seededRand(42077);
   const today = toLocalDateString(new Date());
   const templates = [
-    { app: "VS Code", proc: "Code.exe", title: "tracker.rs — pulsetrack — Visual Studio Code", ctx: null, weight: 32 },
-    { app: "VS Code", proc: "Code.exe", title: "OverviewView.tsx — pulsetrack — Visual Studio Code", ctx: null, weight: 20 },
+    { app: "VS Code", proc: "Code.exe", title: "tracker.rs — DestTraky — Visual Studio Code", ctx: null, weight: 32 },
+    { app: "VS Code", proc: "Code.exe", title: "OverviewView.tsx — DestTraky — Visual Studio Code", ctx: null, weight: 20 },
     { app: "Windows Terminal", proc: "WindowsTerminal.exe", title: "cargo test -p pulsetrack-core", ctx: null, weight: 14 },
-    { app: "Google Chrome", proc: "chrome.exe", title: "PR #128 · pulsetrack · GitHub - Google Chrome", ctx: "GitHub", weight: 15 },
+    { app: "Google Chrome", proc: "chrome.exe", title: "PR #128 · DestTraky · GitHub - Google Chrome", ctx: "GitHub", weight: 15 },
     { app: "Google Chrome", proc: "chrome.exe", title: "Design Tokens · Figma - Google Chrome", ctx: "Figma", weight: 10 },
     { app: "Obsidian", proc: "Obsidian.exe", title: "Architecture Notes - Obsidian", ctx: null, weight: 9 },
     { app: "Slack", proc: "Slack.exe", title: "#engineering - Workspace - Slack", ctx: null, weight: 11 },
-    { app: "File Explorer", proc: "explorer.exe", title: "pulsetrack — File Explorer", ctx: null, weight: 5 },
+    { app: "File Explorer", proc: "explorer.exe", title: "DestTraky — File Explorer", ctx: null, weight: 5 },
     { app: "Google Chrome", proc: "chrome.exe", title: "Systems Engineering Talk - YouTube - Google Chrome", ctx: "YouTube", weight: 8 },
     { app: "Google Chrome", proc: "chrome.exe", title: "r/rust - Reddit - Google Chrome", ctx: "Reddit", weight: 6 },
     { app: "Discord", proc: "Discord.exe", title: "#general — Rust Community — Discord", ctx: null, weight: 6 },
@@ -309,7 +309,7 @@ export class BrowserMockEngine {
       isIdle: false,
       isFullscreenSuppressed: false,
       activeApp: "VS Code",
-      activeTitle: "tracker.rs — pulsetrack — Visual Studio Code",
+      activeTitle: "tracker.rs — DestTraky — Visual Studio Code",
       activeContext: null,
       activeCategoryId: "deep-work",
       activeDurationSecs: 412,
@@ -354,6 +354,14 @@ export class BrowserMockEngine {
     if (!this.live.paused) {
       this.live.activeDurationSecs += 1;
       this.live.todayTotalSecs += 1;
+      const today = toLocalDateString(new Date());
+      for (let i = this.sessions.length - 1; i >= 0; i--) {
+        if (this.sessions[i].date === today) {
+          this.sessions[i].durationSecs += 1;
+          this.sessions[i].endTs += 1000;
+          break;
+        }
+      }
       this.emitLive();
     }
 

@@ -15,7 +15,7 @@ import type {
   NavTab,
   PeriodComparison,
 } from "../types/pulsetrack";
-import { formatDelta, formatDuration } from "../lib/format";
+import { formatDelta, formatDuration, formatDurationLive, toLocalDateString } from "../lib/format";
 import { ColumnScoreChart } from "../components/charts/ColumnScoreChart";
 import { ActivityMixBar } from "../components/charts/ActivityMixBar";
 import { TopAppsTable } from "../components/charts/TopAppsTable";
@@ -167,6 +167,9 @@ export function OverviewView({
   }
 
   const isEmpty = summary.totalActiveSecs === 0;
+  const todayStr = toLocalDateString(new Date());
+  const includesToday = startDate <= todayStr && endDate >= todayStr;
+  const fmtKpi = includesToday ? formatDurationLive : formatDuration;
   const rangeLabel =
     preset === "today"
       ? "Today"
@@ -185,7 +188,7 @@ export function OverviewView({
         {[
           {
             label: "Active Time",
-            value: isEmpty ? "0m" : formatDuration(summary.totalActiveSecs),
+            value: isEmpty ? "0s" : fmtKpi(summary.totalActiveSecs),
             comp: summary.activeComparison,
             icon: Clock,
             accent: "#D97706",
@@ -202,7 +205,7 @@ export function OverviewView({
           },
           {
             label: "Productive",
-            value: isEmpty ? "0m" : formatDuration(summary.productiveSecs),
+            value: isEmpty ? "0s" : fmtKpi(summary.productiveSecs),
             comp: summary.productiveComparison,
             icon: Flame,
             accent: "#9E7B3B",
