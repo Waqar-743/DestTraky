@@ -19,7 +19,7 @@ use pulsetrack_core::models::{
 };
 use pulsetrack_core::platform::create_platform_monitor;
 use pulsetrack_core::rules::test_rule_evaluation;
-use pulsetrack_core::tracker::ActivityTracker;
+use pulsetrack_core::tracker::{merge_live_sessions, ActivityTracker};
 use tauri::{AppHandle, Emitter, Manager, State, WindowEvent};
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use tauri_plugin_dialog::DialogExt;
@@ -31,6 +31,23 @@ pub struct AppState {
     pub focus: Arc<Mutex<FocusEngine>>,
     pub live: Arc<Mutex<LiveTrackingStatus>>,
     pub quitting: Arc<AtomicBool>,
+    pub data_dirty: Arc<AtomicBool>,
+}
+
+fn query_sessions_with_live(
+    state: &AppState,
+    start_date: &str,
+    end_date: &str,
+) -> Result<Vec<ActivitySession>, String> {
+    let stored = state
+        .db
+        .lock()
+        .unwrap()
+        .query_sessions(start_date, end_date)
+        .map_err(|e| e.to_string())?;
+    let now_ms = Local::now().timestamp_millis();
+    let live_snapshot = state.tracker.lock().unwrap().active_snapshot(now_ms);
+    Ok(merge_live_sessions(&stored, &live_snapshot, start_date, end_date))
 }
 
 #[tauri::command]
@@ -44,6 +61,7 @@ fn set_paused(app: AppHandle, state: State<AppState>, paused: bool) -> Result<Li
     let flushed = state.tracker.lock().unwrap().set_paused(paused, now_ms);
     if !flushed.is_empty() {
         state.db.lock().unwrap().upsert_sessions(&flushed).map_err(|e| e.to_string())?;
+        state.data_dirty.store(true, Ordering::SeqCst);
     }
     let live = {
         let mut l = state.live.lock().unwrap();
@@ -66,12 +84,16 @@ fn get_dashboard_summary(
     end_date: String,
 ) -> Result<DashboardSummary, String> {
     let (prev_start, prev_end) = compute_previous_range(&start_date, &end_date)?;
-    let db = state.db.lock().unwrap();
-    let current = db.query_sessions(&start_date, &end_date).map_err(|e| e.to_string())?;
-    let previous = db.query_sessions(&prev_start, &prev_end).map_err(|e| e.to_string())?;
-    let categories = db.list_categories().map_err(|e| e.to_string())?;
-    let settings = db.load_settings().map_err(|e| e.to_string())?;
-    let icons = db.load_all_icons().map_err(|e| e.to_string())?;
+    let current = query_sessions_with_live(&state, &start_date, &end_date)?;
+    let (previous, categories, settings, icons) = {
+        let db = state.db.lock().unwrap();
+        (
+            db.query_sessions(&prev_start, &prev_end).map_err(|e| e.to_string())?,
+            db.list_categories().map_err(|e| e.to_string())?,
+            db.load_settings().map_err(|e| e.to_string())?,
+            db.load_all_icons().map_err(|e| e.to_string())?,
+        )
+    };
 
     Ok(build_dashboard_summary(
         &start_date,
@@ -92,12 +114,7 @@ fn get_sessions(
     start_date: String,
     end_date: String,
 ) -> Result<Vec<ActivitySession>, String> {
-    state
-        .db
-        .lock()
-        .unwrap()
-        .query_sessions(&start_date, &end_date)
-        .map_err(|e| e.to_string())
+    query_sessions_with_live(&state, &start_date, &end_date)
 }
 
 #[tauri::command]
@@ -109,6 +126,7 @@ fn list_categories(state: State<AppState>) -> Result<Vec<Category>, String> {
 fn save_category(state: State<AppState>, category: Category) -> Result<Vec<Category>, String> {
     let db = state.db.lock().unwrap();
     db.save_category(&category).map_err(|e| e.to_string())?;
+    state.data_dirty.store(true, Ordering::SeqCst);
     db.list_categories().map_err(|e| e.to_string())
 }
 
@@ -116,6 +134,7 @@ fn save_category(state: State<AppState>, category: Category) -> Result<Vec<Categ
 fn delete_category(state: State<AppState>, id: String) -> Result<Vec<Category>, String> {
     let db = state.db.lock().unwrap();
     db.delete_category(&id).map_err(|e| e.to_string())?;
+    state.data_dirty.store(true, Ordering::SeqCst);
     db.list_categories().map_err(|e| e.to_string())
 }
 
@@ -129,6 +148,7 @@ fn save_rule(state: State<AppState>, rule: CategoryRule) -> Result<Vec<CategoryR
     let db = state.db.lock().unwrap();
     db.save_rule(&rule).map_err(|e| e.to_string())?;
     let _ = db.recategorize_all_sessions();
+    state.data_dirty.store(true, Ordering::SeqCst);
     db.list_rules().map_err(|e| e.to_string())
 }
 
@@ -137,6 +157,7 @@ fn delete_rule(state: State<AppState>, id: String) -> Result<Vec<CategoryRule>, 
     let db = state.db.lock().unwrap();
     db.delete_rule(&id).map_err(|e| e.to_string())?;
     let _ = db.recategorize_all_sessions();
+    state.data_dirty.store(true, Ordering::SeqCst);
     db.list_rules().map_err(|e| e.to_string())
 }
 
@@ -149,6 +170,7 @@ fn list_ignore_rules(state: State<AppState>) -> Result<Vec<IgnoreRule>, String> 
 fn save_ignore_rule(state: State<AppState>, rule: IgnoreRule) -> Result<Vec<IgnoreRule>, String> {
     let db = state.db.lock().unwrap();
     db.save_ignore_rule(&rule).map_err(|e| e.to_string())?;
+    state.data_dirty.store(true, Ordering::SeqCst);
     db.list_ignore_rules().map_err(|e| e.to_string())
 }
 
@@ -156,16 +178,21 @@ fn save_ignore_rule(state: State<AppState>, rule: IgnoreRule) -> Result<Vec<Igno
 fn delete_ignore_rule(state: State<AppState>, id: String) -> Result<Vec<IgnoreRule>, String> {
     let db = state.db.lock().unwrap();
     db.delete_ignore_rule(&id).map_err(|e| e.to_string())?;
+    state.data_dirty.store(true, Ordering::SeqCst);
     db.list_ignore_rules().map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn list_limit_statuses(state: State<AppState>) -> Result<Vec<DailyLimitStatus>, String> {
     let today = Local::now().format("%Y-%m-%d").to_string();
-    let db = state.db.lock().unwrap();
-    let limits = db.list_limits().map_err(|e| e.to_string())?;
-    let sessions = db.query_sessions(&today, &today).map_err(|e| e.to_string())?;
-    let categories = db.list_categories().map_err(|e| e.to_string())?;
+    let sessions = query_sessions_with_live(&state, &today, &today)?;
+    let (limits, categories) = {
+        let db = state.db.lock().unwrap();
+        (
+            db.list_limits().map_err(|e| e.to_string())?,
+            db.list_categories().map_err(|e| e.to_string())?,
+        )
+    };
     Ok(evaluate_daily_limits(&limits, &sessions, &categories))
 }
 
@@ -175,6 +202,7 @@ fn save_limit(state: State<AppState>, limit: DailyLimit) -> Result<Vec<DailyLimi
         let db = state.db.lock().unwrap();
         db.save_limit(&limit).map_err(|e| e.to_string())?;
     }
+    state.data_dirty.store(true, Ordering::SeqCst);
     list_limit_statuses(state)
 }
 
@@ -184,6 +212,7 @@ fn delete_limit(state: State<AppState>, id: String) -> Result<Vec<DailyLimitStat
         let db = state.db.lock().unwrap();
         db.delete_limit(&id).map_err(|e| e.to_string())?;
     }
+    state.data_dirty.store(true, Ordering::SeqCst);
     list_limit_statuses(state)
 }
 
@@ -289,6 +318,7 @@ fn save_settings(
         .unwrap()
         .save_settings(&settings)
         .map_err(|e| e.to_string())?;
+    state.data_dirty.store(true, Ordering::SeqCst);
 
     // Sync Windows login auto-start cleanly
     let autostart = app.autolaunch();
@@ -310,9 +340,9 @@ fn export_data(
     end_date: String,
 ) -> Result<Option<String>, String> {
     let (prev_start, prev_end) = compute_previous_range(&start_date, &end_date)?;
+    let sessions = query_sessions_with_live(&state, &start_date, &end_date)?;
     let (content, default_name, ext) = {
         let db = state.db.lock().unwrap();
-        let sessions = db.query_sessions(&start_date, &end_date).map_err(|e| e.to_string())?;
         let categories = db.list_categories().map_err(|e| e.to_string())?;
         if format.eq_ignore_ascii_case("json") {
             let prev = db.query_sessions(&prev_start, &prev_end).map_err(|e| e.to_string())?;
@@ -392,6 +422,7 @@ fn log_manual_session(
         .unwrap()
         .upsert_sessions(&[session.clone()])
         .map_err(|e| e.to_string())?;
+    state.data_dirty.store(true, Ordering::SeqCst);
     Ok(session)
 }
 
@@ -425,20 +456,30 @@ fn clear_all_data(state: State<AppState>) -> Result<(), String> {
         .lock()
         .unwrap()
         .clear_all_activity_data()
-        .map_err(|e| e.to_string())
+        .map_err(|e| e.to_string())?;
+    state.data_dirty.store(true, Ordering::SeqCst);
+    Ok(())
 }
 
 fn spawn_background_monitor(app: AppHandle, state: AppState) {
     let icon_cache_dir = app
         .path()
         .app_local_data_dir()
-        .unwrap_or_else(|_| std::env::temp_dir().join("pulsetrack"))
+        .unwrap_or_else(|_| std::env::temp_dir().join("desttraky"))
         .join("icons");
 
     std::thread::spawn(move || {
         let mut monitor = create_platform_monitor(icon_cache_dir);
         let mut limit_alerts = LimitAlertTracker::default();
         let mut tick_counter: u64 = 0;
+
+        let mut cached_today_date = String::new();
+        let mut settings = AppSettings::default();
+        let mut rules: Vec<CategoryRule> = Vec::new();
+        let mut ignore_rules: Vec<IgnoreRule> = Vec::new();
+        let mut categories: Vec<Category> = Vec::new();
+        let mut limits: Vec<DailyLimit> = Vec::new();
+        let mut cached_today_stored: Vec<ActivitySession> = Vec::new();
 
         loop {
             if state.quitting.load(Ordering::SeqCst) {
@@ -457,20 +498,26 @@ fn spawn_background_monitor(app: AppHandle, state: AppState) {
                 }
             }
 
-            let (settings, rules, ignore_rules, categories, limits) = {
+            // Reload config & stored today sessions ONLY when dirty or when the local date changes
+            // (eliminates 6 redundant SQLite queries every second during steady-state tracking).
+            let needs_reload = cached_today_date != today
+                || state.data_dirty.swap(false, Ordering::SeqCst);
+            if needs_reload {
                 let db = state.db.lock().unwrap();
-                (
-                    db.load_settings().unwrap_or_default(),
-                    db.list_rules().unwrap_or_default(),
-                    db.list_ignore_rules().unwrap_or_default(),
-                    db.list_categories().unwrap_or_default(),
-                    db.list_limits().unwrap_or_default(),
-                )
-            };
+                settings = db.load_settings().unwrap_or_default();
+                rules = db.list_rules().unwrap_or_default();
+                ignore_rules = db.list_ignore_rules().unwrap_or_default();
+                categories = db.list_categories().unwrap_or_default();
+                limits = db.list_limits().unwrap_or_default();
+                cached_today_stored = db.query_sessions(&today, &today).unwrap_or_default();
+                cached_today_date = today.clone();
+            }
 
-            let out = {
+            let (out, live_snapshot, paused) = {
                 let mut tracker = state.tracker.lock().unwrap();
-                tracker.tick(now_ms, sample, &settings, &rules, &ignore_rules)
+                let out = tracker.tick(now_ms, sample, &settings, &rules, &ignore_rules);
+                let snap = tracker.active_snapshot(now_ms);
+                (out, snap, tracker.paused)
             };
 
             // Persist ONLY transitions and periodic checkpoints (never every 1s)
@@ -482,22 +529,20 @@ fn spawn_background_monitor(app: AppHandle, state: AppState) {
                 if !out.checkpoint.is_empty() {
                     let _ = db.upsert_sessions(&out.checkpoint);
                 }
+                cached_today_stored = db.query_sessions(&today, &today).unwrap_or_default();
             }
 
-            // Compute live today totals + limit checks
-            let today_sessions = state
-                .db
-                .lock()
-                .unwrap()
-                .query_sessions(&today, &today)
-                .unwrap_or_default();
-
-            let stored_today_secs: i64 = today_sessions.iter().map(|s| s.duration_secs.max(0)).sum();
-            let today_total_secs = stored_today_secs + out.active_duration_secs;
-            let today_score = calculate_productivity_score(&today_sessions, &categories);
+            // Deduplicated live merge: replaces any already-checkpointed row by session ID
+            // so long sessions (e.g. 32+ min in Chrome) are NEVER double-counted and update every 1s.
+            let live_today_sessions =
+                merge_live_sessions(&cached_today_stored, &live_snapshot, &today, &today);
+            let today_total_secs: i64 = live_today_sessions
+                .iter()
+                .map(|s| s.duration_secs.max(0))
+                .sum();
+            let today_score = calculate_productivity_score(&live_today_sessions, &categories);
 
             let live_status = {
-                let paused = state.tracker.lock().unwrap().paused;
                 let mut live = state.live.lock().unwrap();
                 live.paused = paused;
                 live.is_idle = out.is_idle;
@@ -512,9 +557,9 @@ fn spawn_background_monitor(app: AppHandle, state: AppState) {
                 live.clone()
             };
 
-            // Check daily limits every 5 seconds
+            // Check daily limits every 5 seconds against live merged today sessions
             if tick_counter % 5 == 0 && !limits.is_empty() {
-                let statuses = evaluate_daily_limits(&limits, &today_sessions, &categories);
+                let statuses = evaluate_daily_limits(&limits, &live_today_sessions, &categories);
                 let alerts = limit_alerts.check_alerts(&today, now_ms, &statuses);
                 for alert in alerts {
                     let _ = app
@@ -634,6 +679,7 @@ pub fn run() {
                     today_score: None,
                 })),
                 quitting: Arc::new(AtomicBool::new(false)),
+                data_dirty: Arc::new(AtomicBool::new(true)),
             };
 
             let bg_state = AppState {
@@ -642,6 +688,7 @@ pub fn run() {
                 focus: Arc::clone(&state.focus),
                 live: Arc::clone(&state.live),
                 quitting: Arc::clone(&state.quitting),
+                data_dirty: Arc::clone(&state.data_dirty),
             };
 
             app.manage(state);
