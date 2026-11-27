@@ -81,9 +81,23 @@ jobs:
           Write-Host "Publishing to release $tag with files:"
           $files | ForEach-Object { Write-Host " - $_" }
 
+          $repo = "${{ github.repository }}"
+          $notes = @(
+            "## Downloads",
+            "",
+            "- **EXE Setup (Recommended):** [DestTraky_1.0.0_x64-setup.exe](https://github.com/$repo/releases/download/$tag/DestTraky_1.0.0_x64-setup.exe)",
+            "- **MSI Installer:** [DestTraky_1.0.0_x64_en-US.msi](https://github.com/$repo/releases/download/$tag/DestTraky_1.0.0_x64_en-US.msi)",
+            "- **Portable EXE:** [DestTraky_portable_x64.exe](https://github.com/$repo/releases/download/$tag/DestTraky_portable_x64.exe)",
+            "",
+            "**Website:** https://waqar-743.github.io/DestTraky/",
+            "**Full Changelog:** https://github.com/$repo/commits/$tag"
+          ) -join "`n"
+          Set-Content -Path "release-notes.md" -Value $notes -Encoding utf8
+
           gh release view $tag 2>$null
           if ($LASTEXITCODE -ne 0) {
-            gh release create $tag @files --title "DestTraky $tag" --generate-notes --latest
+            gh release create $tag @files --title "DestTraky $tag" --notes-file "release-notes.md" --latest
           } else {
             gh release upload $tag @files --clobber
+            gh release edit $tag --notes-file "release-notes.md" --latest
           }
