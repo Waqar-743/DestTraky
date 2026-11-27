@@ -73,8 +73,9 @@ Get the latest release from [GitHub Releases](https://github.com/Waqar-743/DestT
 
 | Distribution | File Name | Size | Best For |
 | :--- | :--- | :---: | :--- |
-| **EXE Setup (Recommended)** | [`DestTraky_1.0.0_x64-setup.exe`](https://github.com/Waqar-743/DestTraky/releases/latest) | `3.5 MB` | Standard Windows 10/11 installation with Start Menu & uninstaller |
-| **Portable Executable** | [`DestTraky_portable_x64.exe`](https://github.com/Waqar-743/DestTraky/releases/latest) | `14 MB` | Zero-install single binary — run directly from any folder |
+| **EXE Setup (Recommended)** | [`DestTraky_1.0.0_x64-setup.exe`](https://github.com/Waqar-743/DestTraky/releases/latest/download/DestTraky_1.0.0_x64-setup.exe) | `3.7 MB` | Standard Windows 10/11 installation with Start Menu & uninstaller |
+| **MSI Installer** | [`DestTraky_1.0.0_x64_en-US.msi`](https://github.com/Waqar-743/DestTraky/releases/latest/download/DestTraky_1.0.0_x64_en-US.msi) | `5.2 MB` | Standard Windows Installer package for silent / managed installs |
+| **Portable Executable** | [`DestTraky_portable_x64.exe`](https://github.com/Waqar-743/DestTraky/releases/latest/download/DestTraky_portable_x64.exe) | `14.4 MB` | Zero-install single binary — run directly from any folder |
 
 > **100% Offline & Private:** Runs silently in your Windows system tray with no admin rights required. Zero telemetry, zero accounts, full CSV & JSON export anytime.
 
