@@ -2,7 +2,7 @@
 name = "pulsetrack-core"
 version = "1.0.0"
 edition = "2021"
-description = "Core tracking, storage, rules, analytics, focus, and Windows platform engine for PulseTrack"
+description = "Core tracking, storage, rules, analytics, focus, and Windows platform engine for DestTraky"
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }

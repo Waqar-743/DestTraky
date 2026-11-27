@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Default local desktop permissions for PulseTrack",
+  "description": "Default local desktop permissions for DestTraky",
   "windows": ["main"],
   "permissions": [
     "core:default",

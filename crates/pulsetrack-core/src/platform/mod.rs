@@ -57,6 +57,7 @@ pub fn friendly_app_name(process_name: &str) -> String {
         "calculatorapp.exe" => "Calculator".into(),
         "notepad.exe" => "Notepad".into(),
         "steam.exe" | "steamwebhelper.exe" => "Steam".into(),
+        "pulsetrack.exe" | "pulsetrack" | "desttraky.exe" | "desttraky" | "desttraky_portable_x64.exe" => "DestTraky".into(),
         _ => {
             let stem = process_name
                 .strip_suffix(".exe")

@@ -150,6 +150,10 @@ impl Database {
         let _ = self.conn.execute("ALTER TABLE ignore_rules ADD COLUMN is_regex INTEGER NOT NULL DEFAULT 0", []);
         let _ = self.conn.execute("ALTER TABLE activity_sessions ADD COLUMN tags TEXT NOT NULL DEFAULT '[]'", []);
         let _ = self.conn.execute("ALTER TABLE activity_sessions ADD COLUMN is_manual INTEGER NOT NULL DEFAULT 0", []);
+        let _ = self.conn.execute(
+            "UPDATE activity_sessions SET app_name = 'DestTraky' WHERE LOWER(app_name) = 'pulsetrack' OR LOWER(process_name) IN ('pulsetrack.exe', 'desttraky.exe', 'desttraky_portable_x64.exe')",
+            [],
+        );
 
         Ok(())
     }

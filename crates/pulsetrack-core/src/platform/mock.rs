@@ -26,7 +26,7 @@ impl PlatformMonitor for MockMonitor {
             0 => WindowSample {
                 app_name: "VS Code".into(),
                 process_name: "Code.exe".into(),
-                window_title: "tracker.rs — pulsetrack — Visual Studio Code".into(),
+                window_title: "tracker.rs — DestTraky — Visual Studio Code".into(),
                 is_fullscreen: false,
                 idle_secs: 0,
                 icon_key: Some("code_exe".into()),
@@ -34,7 +34,7 @@ impl PlatformMonitor for MockMonitor {
             1 => WindowSample {
                 app_name: "Google Chrome".into(),
                 process_name: "chrome.exe".into(),
-                window_title: "PR #128 · pulsetrack · GitHub - Google Chrome".into(),
+                window_title: "PR #128 · DestTraky · GitHub - Google Chrome".into(),
                 is_fullscreen: false,
                 idle_secs: 0,
                 icon_key: Some("chrome_exe".into()),

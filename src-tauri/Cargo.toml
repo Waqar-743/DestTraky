@@ -1,8 +1,8 @@
 [package]
 name = "pulsetrack"
 version = "1.0.0"
-description = "PulseTrack — Local-first Windows screen-time & productivity monitor"
-authors = ["PulseTrack"]
+description = "DestTraky — Local-first Windows screen-time & productivity monitor"
+authors = ["DestTraky"]
 edition = "2021"
 
 [lib]
