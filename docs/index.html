@@ -6,11 +6,11 @@
     <title>DestTraky — Free Open-Source Windows Screen Time, Timeline &amp; Productivity Tracker</title>
     <meta
       name="description"
-      content="DestTraky is a 100% free, open-source, local-first Windows screen-time, dual-lane timeline, and arbtt-style regex productivity tracker built with Rust and Tauri v2 in a 3.5 MB installer."
+      content="DestTraky is a 100% free, open-source, local-first Windows screen-time, dual-lane timeline, and priority regex productivity tracker built with Rust and Tauri v2 in a 3.5 MB installer."
     />
     <meta
       name="keywords"
-      content="DestTraky, Windows screen time tracker, open source time tracker, local-first productivity app, offline RescueTime alternative, Tockler alternative, arbtt Windows, dual-lane timeline, Pomodoro focus timer, Rust Tauri desktop app, SQLite time tracking"
+      content="DestTraky, Windows screen time tracker, open source time tracker, local-first productivity app, offline RescueTime alternative, dual-lane timeline, regex productivity rules, Pomodoro focus timer, Rust Tauri desktop app, SQLite time tracking"
     />
     <meta name="author" content="Waqar Ahmed" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -28,7 +28,7 @@
     />
     <meta
       property="og:description"
-      content="Track foreground apps, inspect a zoomable dual-lane timeline, run arbtt-style regex rules, and stay focused — 100% offline in SQLite WAL with a 3.5 MB native Rust &amp; Tauri v2 installer."
+      content="Track foreground apps, inspect a zoomable dual-lane timeline, run priority regex categorization rules, and stay focused — 100% offline in SQLite WAL with a 3.5 MB native Rust &amp; Tauri v2 installer."
     />
     <meta
       property="og:image"
@@ -49,7 +49,7 @@
     />
     <meta
       name="twitter:description"
-      content="Non-admin Win32 tracking, dual-lane timeline, arbtt-style regex rules, Pomodoro focus timer, and 100% local SQLite storage in a 3.5 MB Windows installer."
+      content="Non-admin Win32 tracking, dual-lane timeline, priority regex rules, Pomodoro focus timer, and 100% local SQLite storage in a 3.5 MB Windows installer."
     />
     <meta
       name="twitter:image"
@@ -110,7 +110,7 @@
             "downloadUrl": "https://github.com/Waqar-743/DestTraky/releases/latest",
             "installUrl": "https://github.com/Waqar-743/DestTraky/releases/latest",
             "codeRepository": "https://github.com/Waqar-743/DestTraky",
-            "description": "A 100% free, open-source, local-first Windows screen-time, dual-lane timeline, and arbtt-style rule-based productivity tracker built with Rust, Tauri v2, and SQLite WAL.",
+            "description": "A 100% free, open-source, local-first Windows screen-time, dual-lane timeline, and priority regex rule-based productivity tracker built with Rust, Tauri v2, and SQLite WAL.",
             "screenshot": [
               "https://waqar-743.github.io/DestTraky/assets/screenshots/overview-light.png",
               "https://waqar-743.github.io/DestTraky/assets/screenshots/overview-dark.png",
@@ -123,7 +123,7 @@
               "Non-admin Win32 foreground and UWP app tracking",
               "Smart idle detection with fullscreen video suppression and sleep/wake handling",
               "Zoomable dual-lane online/idle timeline and 28-day activity heatmap",
-              "arbtt-style priority regex categorization rules with live Rule Sandbox",
+              "Priority regex categorization rules with live Rule Sandbox",
               "Built-in Pomodoro focus timer, streaks, and daily app/category limits",
               "100% local SQLite WAL storage with one-click CSV and JSON export"
             ],
@@ -168,7 +168,7 @@
                 "name": "How does DestTraky compare to RescueTime, Toggl, or Electron trackers?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Unlike cloud-first subscriptions or 100-250 MB Electron trackers, DestTraky is completely free, open source, ships in a 3.5 MB native Rust and Tauri v2 installer, includes arbtt-style regex categorization rules with a live sandbox, and keeps all data local."
+                  "text": "Unlike cloud-first subscriptions or 100-250 MB Electron trackers, DestTraky is completely free, open source, ships in a 3.5 MB native Rust and Tauri v2 installer, includes priority regex categorization rules with a live sandbox, and keeps all data local."
                 }
               },
               {
@@ -337,7 +337,7 @@
             </h1>
             <p class="hero-subtitle">
               DestTraky combines non-admin Win32 foreground tracking, a zoomable dual-lane timeline,
-              and an <code>arbtt</code>-style regex rule engine inside a 3.5&nbsp;MB native Rust &amp;
+              and a priority regex rule engine inside a 3.5&nbsp;MB native Rust &amp;
               Tauri&nbsp;v2 desktop studio. No accounts, no subscriptions, zero telemetry.
             </p>
 
@@ -462,7 +462,7 @@
             <p class="section-subtitle">
               Every view in DestTraky is captured directly from the live application — crafted in
               Warm Alabaster and Warm Obsidian with hatched score columns, glowing Ember Waves, a
-              Tockler-inspired dual-lane timeline, and an interactive Rule Sandbox.
+              zoomable dual-lane timeline, and an interactive Rule Sandbox.
             </p>
           </div>
 
@@ -638,7 +638,7 @@
               </div>
               <h3>Dual-Lane Timeline &amp; Manual Tasks</h3>
               <p>
-                Inspired by Tockler: inspect a zoomable (<code>24h / 12h / 6h</code>) dual-lane
+                Inspect a zoomable (<code>24h / 12h / 6h</code>) dual-lane
                 strip showing <code>Online / Idle / Offline</code> state above app blocks, plus
                 <code>+ Log Task</code> for offline deep work or meetings.
               </p>
@@ -651,7 +651,7 @@
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                 </svg>
               </div>
-              <h3><code>arbtt</code>-Style Regex Rules &amp; Auto-Tags</h3>
+              <h3>Priority Regex Rules &amp; Auto-Tags</h3>
               <p>
                 Deterministic <code>WindowTitle &gt; AppName &gt; Neutral</code> evaluation with
                 substring and regex rules, custom <code>#tags</code>, automatic schedule tags
@@ -687,7 +687,7 @@
           <div class="section-header">
             <span class="eyebrow">Try It Live</span>
             <h2 id="sandbox-heading" class="section-title">
-              Interactive <code>arbtt</code>-Style Rule Sandbox
+              Interactive Priority Rule Sandbox
             </h2>
             <p class="section-subtitle">
               Test how DestTraky classifies any Windows process and window title in real time using
@@ -834,7 +834,7 @@
                 </tr>
                 <tr>
                   <td>Regex Rules &amp; Live Sandbox</td>
-                  <td class="col-desttraky">Built-in (arbtt-style)</td>
+                  <td class="col-desttraky">Built-in (Priority Regex)</td>
                   <td>Limited / Paid tier</td>
                   <td>Rarely built-in</td>
                 </tr>
@@ -964,12 +964,11 @@
 
             <article class="pt-card arch-card">
               <div class="arch-layer">Core Engine</div>
-              <h3>SQLite WAL + <code>arbtt</code> Rules</h3>
+              <h3>SQLite WAL &amp; Rule Engine</h3>
               <p>
                 Pure Rust workspace crate (<code>pulsetrack-core</code>) with bundled
                 <a href="https://www.sqlite.org/wal.html" target="_blank" rel="noopener noreferrer">SQLite WAL</a>,
-                <a href="https://arbtt.nomeata.de/" target="_blank" rel="noopener noreferrer">arbtt</a>-inspired
-                regex categorization, focus streaks, and 22 unit tests.
+                deterministic priority regex categorization, focus streaks, and 22 unit tests.
               </p>
             </article>
 
@@ -1049,7 +1048,7 @@
               <div class="faq-answer">
                 Unlike cloud subscriptions or 100–250&nbsp;MB Electron apps, DestTraky is 100% free
                 and open source, installs in just 3.5&nbsp;MB via Rust and Tauri&nbsp;v2, includes
-                an <code>arbtt</code>-style regex rule engine with a live sandbox, and keeps every
+                a priority regex rule engine with a live sandbox, and keeps every
                 byte of your activity history on your own machine.
               </div>
             </div>
