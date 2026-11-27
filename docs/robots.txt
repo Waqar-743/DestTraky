@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://waqar-743.github.io/DestTraky/sitemap.xml
