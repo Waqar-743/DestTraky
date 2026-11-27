@@ -11,7 +11,7 @@
 
   <p>
     <strong>A 100% free, open-source, local-first Windows screen-time, timeline &amp; productivity tracker.</strong><br />
-    Non-admin Win32 tracking · Dual-lane timeline &amp; 28-day heatmap · <code>arbtt</code>-style regex rules &amp; auto-tags · Bundled SQLite WAL — in a <strong>3.5 MB</strong> native Rust &amp; Tauri v2 installer.
+    Non-admin Win32 tracking · Dual-lane timeline &amp; 28-day heatmap · Priority regex rules &amp; auto-tags · Bundled SQLite WAL — in a <strong>3.5 MB</strong> native Rust &amp; Tauri v2 installer.
   </p>
 
   <p>
@@ -63,7 +63,7 @@
 
 - **100% Local-First & Private:** Every session, rule, tag, focus cycle, and limit is stored locally in a bundled SQLite database (`WAL` mode). Zero bytes leave your machine.
 - **Accurate, Non-Admin Windows Tracking:** Samples the active foreground window (`GetForegroundWindow`), resolves UWP child apps (`ApplicationFrameHost.exe`), detects idle time (`GetLastInputInfo`), suppresses false idle during fullscreen video or meetings, splits sessions cleanly across midnight, and handles sleep/wake gaps automatically.
-- **Visual Timeline + Rule-Driven Intelligence:** Inspired by the best ideas from **Tockler** (zoomable dual-lane online/idle timeline, 28-day heatmap, manual task logging) and **arbtt** (priority regex rule engine, custom `#tags`, schedule auto-tags, and a live Rule Sandbox).
+- **Visual Timeline + Rule-Driven Intelligence:** Combines a zoomable dual-lane online/idle timeline, 28-day activity heatmap, and manual task logging with a deterministic priority regex rule engine, custom `#tags`, schedule auto-tags, and a live Rule Sandbox.
 
 ---
 
@@ -90,9 +90,9 @@ Get the latest release from [GitHub Releases](https://github.com/Waqar-743/DestT
 ### 2. Visual Analytics & Dual-Lane Timeline
 - **Overview Dashboard:** At-a-glance KPI cards (Total Active Time, Productive Time, Productivity Score `0–100`, Focus Streak, Context Switches/hr) with equal-length period comparisons (`Today`, `Yesterday`, `7D`, `30D`, `Custom`).
 - **Interactive Score Columns & Ember Waves:** Switch seamlessly between hatched pill score columns (with dashed average line) and a mirrored glowing Ember Waves visualization, paired with an **Activity Mix** breakdown, **Top Apps** micro-bar meters, and a 6-petal **Session Flower** chart.
-- **Tockler-Inspired Dual-Lane Timeline & Heatmap:** Inspect a 28-day activity calendar strip and a zoomable (`24h / 12h / 6h`) dual-lane timeline showing `Online / Idle / Offline` status above app sessions, plus `+ Log Task` for logging offline meetings or deep work manually.
+- **Dual-Lane Timeline & Heatmap:** Inspect a 28-day activity calendar strip and a zoomable (`24h / 12h / 6h`) dual-lane timeline showing `Online / Idle / Offline` status above app sessions, plus `+ Log Task` for logging offline meetings or deep work manually.
 
-### 3. `arbtt`-Style Categorization Rules, Tags & Live Sandbox
+### 3. Priority Categorization Rules, Tags & Live Sandbox
 - **Deterministic Rule Priority:** Evaluates rules in strict `WindowTitle > AppName > Neutral` priority order with substring and regular-expression matching.
 - **Custom `#tags` & Automatic Schedule Tags:** Attach custom tags to rules and automatically classify sessions into `#Work Hours`, `#After Hours`, `#Late Night`, and `#Weekend`.
 - **Live Rule Sandbox:** Test any sample app name and window title in real time to preview which rule matches, what category it assigns, and which tags are applied before saving.
@@ -112,7 +112,7 @@ Get the latest release from [GitHub Releases](https://github.com/Waqar-743/DestT
 | **Price** | **Free & Open Source** | Monthly subscription | Free / Paid tiers |
 | **Installer Size** | **3.5 MB** | 80–180 MB | 100–250 MB+ |
 | **100% Local SQLite Storage** | **Yes (WAL mode)** | Cloud-first | Varies |
-| **Regex Rules + Live Sandbox** | **Built-in (`arbtt`-style)** | Limited / Paid | Rarely built-in |
+| **Regex Rules + Live Sandbox** | **Built-in** | Limited / Paid | Rarely built-in |
 | **Dual-Lane Timeline & Manual Tasks** | **Built-in** | Paid add-ons | Partial |
 | **No Account / Zero Telemetry** | **Yes** | Account required | Varies |
 
