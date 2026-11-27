@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "crates/pulsetrack-core",
+    "src-tauri",
+]
+default-members = ["crates/pulsetrack-core"]
+resolver = "2"

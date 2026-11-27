@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+target/
+release/
+src-tauri/gen/
+
+# TypeScript & Editor artifacts
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+*.log
+
+# Local SQLite databases
+*.db
+*.db-wal
+*.db-shm
