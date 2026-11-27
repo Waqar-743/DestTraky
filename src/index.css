@@ -1,0 +1,286 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+[data-theme="light"] {
+  --bg-canvas: #f6f4ee;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f0ede5;
+  --border-subtle: #e7e3d8;
+  --border-strong: #d4cec0;
+  --text-primary: #181714;
+  --text-secondary: #5c584e;
+  --text-muted: #8c877a;
+  --accent-productive: #d97706;
+  --accent-neutral: #78716c;
+  --accent-distracting: #c84630;
+  --accent-focus: #b45309;
+  --accent-brass: #9e7b3b;
+  --hatch-stroke: rgba(120, 113, 108, 0.16);
+  --dot-grid: rgba(120, 113, 108, 0.11);
+  --shadow-card: 0 1px 2px rgba(24, 23, 20, 0.04), 0 6px 20px rgba(24, 23, 20, 0.035);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg-canvas: #0c0c0b;
+  --bg-surface: #141412;
+  --bg-elevated: #1d1c19;
+  --border-subtle: #262521;
+  --border-strong: #38362f;
+  --text-primary: #f4f1e8;
+  --text-secondary: #a49f92;
+  --text-muted: #6c685e;
+  --accent-productive: #e08e1b;
+  --accent-neutral: #8a8478;
+  --accent-distracting: #d04c36;
+  --accent-focus: #e6a63d;
+  --accent-brass: #b08b46;
+  --hatch-stroke: rgba(244, 241, 232, 0.09);
+  --dot-grid: rgba(244, 241, 232, 0.06);
+  --shadow-card: 0 1px 0 rgba(255, 248, 232, 0.04) inset, 0 10px 28px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.pt-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  transition: border-color 180ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pt-card-interactive:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.pt-dot-corner {
+  background-image: radial-gradient(var(--dot-grid) 1px, transparent 1px);
+  background-size: 9px 9px;
+}
+
+.pt-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 5px,
+    var(--hatch-stroke) 5px,
+    var(--hatch-stroke) 6.5px
+  );
+}
+
+.pt-input {
+  background-color: var(--bg-canvas);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  border-radius: 10px;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.8125rem;
+  outline: none;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.pt-input:focus {
+  border-color: var(--accent-productive);
+}
+
+.pt-btn-primary {
+  background-color: var(--accent-productive);
+  color: #fffdf8;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: filter 160ms ease, transform 140ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 160ms ease;
+}
+
+.pt-btn-primary:hover {
+  filter: brightness(1.06);
+  transform: translateY(-0.5px);
+}
+
+.pt-btn-primary:active {
+  transform: translateY(0.5px);
+}
+
+.pt-btn-ghost {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: 10px;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.pt-btn-ghost:hover {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.paused-stripe {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(217, 119, 6, 0.14),
+    rgba(217, 119, 6, 0.14) 10px,
+    rgba(217, 119, 6, 0.05) 10px,
+    rgba(217, 119, 6, 0.05) 20px
+  );
+}
+
+/* Signature smooth animations */
+@keyframes ptFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ptBarGrow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ptWidthGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ptDrawWave {
+  from {
+    stroke-dashoffset: 1200;
+    opacity: 0.25;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes ptPulseLine {
+  0%, 100% {
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dashoffset: 18;
+  }
+}
+
+.animate-pt-in {
+  animation: ptFadeUp 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pt-bar {
+  transform-origin: bottom center;
+  animation: ptBarGrow 540ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pt-width {
+  transform-origin: left center;
+  animation: ptWidthGrow 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pt-wave {
+  stroke-dasharray: 1200;
+  animation: ptDrawWave 950ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pt-ecg {
+  stroke-dasharray: 90;
+  animation: ptPulseLine 3.6s ease-in-out infinite;
+}
+
+.pt-petal {
+  transform-origin: 140px 140px;
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), filter 220ms ease, opacity 200ms ease;
+  cursor: pointer;
+}
+
+.pt-petal:hover {
+  transform: scale(1.06);
+  filter: saturate(1.12);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-button:single-button,
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+input[type="range"] {
+  accent-color: var(--accent-productive);
+}
