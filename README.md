@@ -48,9 +48,9 @@
 
   <a href="https://waqar-743.github.io/DestTraky/">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/screenshots/overview-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="docs/assets/screenshots/overview-light.png" />
-      <img src="docs/assets/screenshots/overview-light.png" alt="DestTraky Overview Dashboard Preview" width="960" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://waqar-743.github.io/DestTraky/assets/screenshots/overview-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://waqar-743.github.io/DestTraky/assets/screenshots/overview-light.png" />
+      <img src="https://waqar-743.github.io/DestTraky/assets/screenshots/overview-light.png" alt="DestTraky Overview Dashboard Preview" width="960" />
     </picture>
   </a>
 </div>
