@@ -1,7 +1,7 @@
 {
   "name": "DestTraky — Windows Screen-Time & Timeline Tracker",
   "short_name": "DestTraky",
-  "description": "100% free, open-source, local-first Windows screen-time, dual-lane timeline, and arbtt-style productivity tracker.",
+  "description": "100% free, open-source, local-first Windows screen-time, dual-lane timeline, and rule-based productivity tracker.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f6f4ee",
