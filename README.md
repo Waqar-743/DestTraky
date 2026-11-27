@@ -15,6 +15,9 @@
   </p>
 
   <p>
+    <a href="https://waqar-743.github.io/DestTraky/">
+      <img alt="DestTraky Live Website" src="https://img.shields.io/badge/Website-Live%20Preview-9E7B3B?style=for-the-badge&logo=googlechrome&logoColor=white" />
+    </a>
     <a href="https://github.com/Waqar-743/DestTraky/releases/latest">
       <img alt="Download DestTraky v1.0.0" src="https://img.shields.io/badge/Download-v1.0.0%20for%20Windows-D97706?style=for-the-badge&logo=windows&logoColor=white" />
     </a>
@@ -32,6 +35,7 @@
   </p>
 
   <p>
+    <a href="https://waqar-743.github.io/DestTraky/"><strong>Live Website</strong></a> ·
     <a href="#download-free-for-windows">Download</a> ·
     <a href="#core-features">Features</a> ·
     <a href="#why-desttraky">Comparison</a> ·
@@ -39,6 +43,16 @@
     <a href="#architecture--tech-stack">Architecture</a> ·
     <a href="#development">Build from Source</a>
   </p>
+
+  <br />
+
+  <a href="https://waqar-743.github.io/DestTraky/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/screenshots/overview-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="docs/assets/screenshots/overview-light.png" />
+      <img src="docs/assets/screenshots/overview-light.png" alt="DestTraky Overview Dashboard Preview" width="960" />
+    </picture>
+  </a>
 </div>
 
 ---
